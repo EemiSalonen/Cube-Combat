@@ -1,0 +1,13 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+
+div {
+	display: flex;
+	justify-content: center;
+}
+
+p {
+	margin: 0px 50px;
+}
