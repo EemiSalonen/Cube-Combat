@@ -145,8 +145,6 @@ export class Rectangle {
 
 			if (currentAttack > currentDefense) {
 				return enemy.id;
-			} else if (currentAttack < currentDefense) {
-				return this.id;
 			} else {
 				return false;
 			}
@@ -156,8 +154,6 @@ export class Rectangle {
 
 			if (currentAttack > currentDefense) {
 				return this.id;
-			} else if (currentAttack < currentDefense) {
-				return enemy.id;
 			} else {
 				return false;
 			}

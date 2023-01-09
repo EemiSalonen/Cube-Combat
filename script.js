@@ -38,10 +38,10 @@ c.onclick = (e) => mouseLocation(e);
 // Draw the coordinates and create pixel-to-coord data. Also defines the 2d context of the canvas which is stored in the correlation object
 const corr = drawField(c, c.getContext("2d"), 10);
 
-const redData = { spawnpoint: { x: -40, y: -20 } };
-const blueData = { spawnpoint: { x: 40, y: 20 } };
-const yellowData = { spawnpoint: { x: -40, y: 20 } };
-const greenData = { spawnpoint: { x: 40, y: -20 } };
+const redData = { spawnpoint: { x: -90, y: -40 } };
+const blueData = { spawnpoint: { x: 90, y: 40 } };
+const yellowData = { spawnpoint: { x: -90, y: 40 } };
+const greenData = { spawnpoint: { x: 90, y: -40 } };
 
 const square = (id, color, spawn) =>
 	new Rectangle(corr, spawn.spawnpoint.x, spawn.spawnpoint.y, color, 5, 5, id);
@@ -77,7 +77,7 @@ const intervalId = setInterval(() => {
 				new Food(
 					corr,
 					Math.floor((Math.random() - 0.5) * 40),
-					Math.floor((Math.random() - 0.5) * 20),
+					Math.floor((Math.random() - 0.5) * 40),
 					"brown",
 					"red"
 				)
@@ -90,7 +90,7 @@ const intervalId = setInterval(() => {
 				new Food(
 					corr,
 					Math.floor((Math.random() - 0.5) * 40),
-					Math.floor((Math.random() - 0.5) * 20),
+					Math.floor((Math.random() - 0.5) * 40),
 					"brown",
 					"blue"
 				)
@@ -103,7 +103,7 @@ const intervalId = setInterval(() => {
 				new Food(
 					corr,
 					Math.floor((Math.random() - 0.5) * 40),
-					Math.floor((Math.random() - 0.5) * 20),
+					Math.floor((Math.random() - 0.5) * 40),
 					"brown",
 					"orange"
 				)
@@ -116,7 +116,7 @@ const intervalId = setInterval(() => {
 				new Food(
 					corr,
 					Math.floor((Math.random() - 0.5) * 40),
-					Math.floor((Math.random() - 0.5) * 20),
+					Math.floor((Math.random() - 0.5) * 40),
 					"brown",
 					"green"
 				)
@@ -151,4 +151,4 @@ const intervalId = setInterval(() => {
 	gPelem.innerHTML = getAmount("green");
 
 	if (paused) clearInterval(intervalId);
-}, 100);
+}, 50);
