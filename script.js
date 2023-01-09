@@ -38,15 +38,22 @@ c.onclick = (e) => mouseLocation(e);
 // Draw the coordinates and create pixel-to-coord data. Also defines the 2d context of the canvas which is stored in the correlation object
 const corr = drawField(c, c.getContext("2d"), 10);
 
-const redData = { spawnpoint: { x: -90, y: -40 } };
-const blueData = { spawnpoint: { x: 90, y: 40 } };
+const redData = { spawnpoint: { x: -90, y: -41 } };
+const blueData = { spawnpoint: { x: 90, y: 41 } };
 const yellowData = { spawnpoint: { x: -90, y: 40 } };
 const greenData = { spawnpoint: { x: 90, y: -40 } };
 
-const square = (id, color, spawn) =>
-	new Rectangle(corr, spawn.spawnpoint.x, spawn.spawnpoint.y, color, 5, 5, id);
-
-// id number 0 is always allocated for the food rectangle!
+const square = (id, color, spawn, warrior = false) =>
+	new Rectangle(
+		corr,
+		spawn.spawnpoint.x,
+		spawn.spawnpoint.y,
+		color,
+		2,
+		2,
+		id,
+		warrior
+	); // Should test around with the attack and defense values
 let field = new Map();
 
 let id = 1;
@@ -127,13 +134,45 @@ const intervalId = setInterval(() => {
 			id++;
 
 			if (deletable.color === "red") {
-				field.set(id, square(id, deletable.color, redData));
+				field.set(
+					id,
+					square(
+						id,
+						deletable.color,
+						redData,
+						Math.floor(Math.random() + 0.5) === 1 ? true : false
+					)
+				);
 			} else if (deletable.color === "blue") {
-				field.set(id, square(id, deletable.color, blueData));
+				field.set(
+					id,
+					square(
+						id,
+						deletable.color,
+						blueData,
+						Math.floor(Math.random() + 0.5) === 1 ? true : false
+					)
+				);
 			} else if (deletable.color === "orange") {
-				field.set(id, square(id, deletable.color, yellowData));
+				field.set(
+					id,
+					square(
+						id,
+						deletable.color,
+						yellowData,
+						Math.floor(Math.random() + 0.5) === 1 ? true : false
+					)
+				);
 			} else {
-				field.set(id, square(id, deletable.color, greenData));
+				field.set(
+					id,
+					square(
+						id,
+						deletable.color,
+						greenData,
+						Math.floor(Math.random() + 0.5) === 1 ? true : false
+					)
+				);
 			}
 
 			field.delete(deletable.food);
@@ -151,4 +190,4 @@ const intervalId = setInterval(() => {
 	gPelem.innerHTML = getAmount("green");
 
 	if (paused) clearInterval(intervalId);
-}, 50);
+}, 100);

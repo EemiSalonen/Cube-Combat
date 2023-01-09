@@ -9,6 +9,7 @@ export class Rectangle {
 		attack,
 		defense,
 		id,
+		warrior = false,
 		sizeX = 1,
 		sizeY = 1,
 		fill = true
@@ -25,6 +26,8 @@ export class Rectangle {
 		this.defense = defense;
 		this.combatValue = 0;
 		this.addInstanceAmount();
+		this.warrior = warrior;
+		this.target;
 	}
 	static instanceAmount = 0;
 
@@ -71,32 +74,80 @@ export class Rectangle {
 		}
 	}
 
-	move(field, opponent) {
-		const foodLocation = field.get(this.color);
+	warriorSearch(field) {
+		let nearestDistX = Number.MAX_SAFE_INTEGER;
+		let nearestDistY = Number.MAX_SAFE_INTEGER;
 
-		if (foodLocation) {
-			if (this.posX < foodLocation.posX) {
+		let nearestX = 0;
+		let nearestY = 0;
+		let targetedEnemy;
+
+		field.forEach((entity) => {
+			if (
+				entity instanceof Food === false &&
+				entity !== this &&
+				entity.color !== this.color
+			) {
+				const distCalcEntityX = entity.posX <= 0 ? -entity.posX : entity.posX;
+				const distCalcThisX = this.posX <= 0 ? -this.posX : this.posX;
+				const distCalcEntityY = entity.posY <= 0 ? -entity.posY : entity.posY;
+				const distCalcThisY = this.posY <= 0 ? -this.posY : this.posY;
+
+				if (distCalcEntityX - distCalcThisX < nearestDistX) {
+					nearestDistX = distCalcEntityX - distCalcThisX;
+					nearestDistX = nearestDistX < 0 ? -nearestDistX : nearestDistX;
+					nearestX = entity;
+				}
+
+				if (distCalcEntityY - distCalcThisY < nearestDistY) {
+					nearestDistY = distCalcEntityY - distCalcThisY;
+					nearestDistY = nearestDistY < 0 ? -nearestDistY : nearestDistY;
+					nearestY = entity;
+				}
+
+				if (nearestX === nearestY) {
+					targetedEnemy = nearestX;
+				}
+			}
+		});
+		return targetedEnemy;
+	}
+
+	move(field, opponent) {
+		if (this.warrior) {
+			if (!this.target) {
+				console.log("test");
+				this.target = this.warriorSearch(field);
+			} else {
+				this.target = field.get(this.target.id);
+			}
+		} else {
+			this.target = field.get(this.color);
+		}
+
+		if (this.target) {
+			if (this.posX < this.target.posX) {
 				if (this.posX + 1 === opponent.posX) {
 					return;
 				}
 				this.posX += 1;
 			}
 
-			if (this.posX > foodLocation.posX) {
+			if (this.posX > this.target.posX) {
 				if (this.posX - 1 === opponent.posX) {
 					return;
 				}
 				this.posX -= 1;
 			}
 
-			if (this.posY < foodLocation.posY) {
+			if (this.posY < this.target.posY) {
 				if (this.posY + 1 === opponent.posY) {
 					return;
 				}
 				this.posY += 1;
 			}
 
-			if (this.posY > foodLocation.posY) {
+			if (this.posY > this.target.posY) {
 				if (this.posY - 1 === opponent.posY) {
 					return;
 				}
@@ -144,6 +195,7 @@ export class Rectangle {
 			const currentDefense = Math.floor(Math.random() * enemy.defense);
 
 			if (currentAttack > currentDefense) {
+				if (this.warrior) this.target = null;
 				return enemy.id;
 			} else {
 				return false;
@@ -153,6 +205,7 @@ export class Rectangle {
 			const currentDefense = Math.floor(Math.random() * this.defense);
 
 			if (currentAttack > currentDefense) {
+				if (this.warrior) this.target = null;
 				return this.id;
 			} else {
 				return false;
