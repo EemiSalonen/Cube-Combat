@@ -11,13 +11,20 @@ const oPelem = document.querySelector("#orange");
 oPelem.style.color = "orange";
 const gPelem = document.querySelector("#green");
 gPelem.style.color = "green";
+const pauseButton = document.querySelector("#pause");
+pauseButton.onclick = () => pause(); // Temporary debugging device
 
+let paused = false;
 function getAmount(color) {
 	let total = 0;
 	field.forEach((entity) => {
 		if (entity.color === color) total++;
 	});
 	return total;
+}
+
+function pause() {
+	paused = !paused;
 }
 
 // Canvas setup
@@ -29,9 +36,8 @@ c.height = innerHeight;
 c.onclick = (e) => mouseLocation(e);
 
 // Draw the coordinates and create pixel-to-coord data. Also defines the 2d context of the canvas which is stored in the correlation object
-const corr = drawField(c, c.getContext("2d"), 20);
+const corr = drawField(c, c.getContext("2d"), 10);
 
-let id = 1;
 const redData = { spawnpoint: { x: -40, y: -20 } };
 const blueData = { spawnpoint: { x: 40, y: 20 } };
 const yellowData = { spawnpoint: { x: -40, y: 20 } };
@@ -43,6 +49,7 @@ const square = (id, color, spawn) =>
 // id number 0 is always allocated for the food rectangle!
 let field = new Map();
 
+let id = 1;
 for (let i = 0; i < 1; i++) {
 	field.set(id, square(id, "red", redData));
 	id++;
@@ -57,7 +64,7 @@ console.log(field);
 
 field.forEach((entity) => entity.draw());
 
-setInterval(() => {
+const intervalId = setInterval(() => {
 	corr.context.clearRect(0, 0, c.width, c.height);
 	drawField(c, c.getContext("2d"), 10);
 
@@ -142,4 +149,6 @@ setInterval(() => {
 	bPelem.innerHTML = getAmount("blue");
 	oPelem.innerHTML = getAmount("orange");
 	gPelem.innerHTML = getAmount("green");
+
+	if (paused) clearInterval(intervalId);
 }, 100);
