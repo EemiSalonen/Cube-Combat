@@ -52,12 +52,15 @@ export class Rectangle {
 	}
 
 	drawWarrior() {
+		console.log(this.corr.x.get(2) - this.corr.x.get(1));
 		this.corr.context.beginPath();
 		this.corr.context.fillStyle = "white";
 		this.corr.context.arc(
-			this.corr.x.get(this.posX) + this.sizeX / 2,
-			this.corr.y.get(this.posY) + this.sizeY / 2,
-			this.sizeX / 2,
+			this.corr.x.get(this.posX) +
+				(this.corr.x.get(2) - this.corr.x.get(1)) / 2,
+			this.corr.y.get(this.posY) +
+				(this.corr.x.get(2) - this.corr.x.get(1)) / 2,
+			(this.corr.x.get(2) - this.corr.x.get(1)) * 0.33,
 			0,
 			2 * Math.PI
 		);
