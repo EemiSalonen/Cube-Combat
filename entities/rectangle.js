@@ -1,4 +1,4 @@
-import { rectangle } from "../lib/api.js";
+import { rectangle, triangle } from "../lib/api.js";
 
 export class Rectangle {
 	constructor(
@@ -45,6 +45,23 @@ export class Rectangle {
 			this.color,
 			this.fill
 		);
+
+		if (this.warrior) {
+			this.drawWarrior();
+		}
+	}
+
+	drawWarrior() {
+		this.corr.context.beginPath();
+		this.corr.context.fillStyle = "white";
+		this.corr.context.arc(
+			this.corr.x.get(this.posX) + 5,
+			this.corr.y.get(this.posY) + 5,
+			2,
+			0,
+			2 * Math.PI
+		);
+		this.corr.context.fill();
 	}
 
 	occupied(field) {
@@ -54,7 +71,23 @@ export class Rectangle {
 				found = entity;
 			}
 
+			if (entity.posX === this.posX + 1 && entity.posY === this.posY + 1) {
+				found = entity;
+			}
+
+			if (entity.posX === this.posX + 1 && entity.posY === this.posY - 1) {
+				found = entity;
+			}
+
 			if (entity.posX === this.posX - 1 && entity.posY === this.posY) {
+				found = entity;
+			}
+
+			if (entity.posX === this.posX - 1 && entity.posY === this.posY + 1) {
+				found = entity;
+			}
+
+			if (entity.posX === this.posX - 1 && entity.posY === this.posY - 1) {
 				found = entity;
 			}
 
@@ -128,28 +161,28 @@ export class Rectangle {
 		if (this.target) {
 			if (this.posX < this.target.posX) {
 				if (this.posX + 1 === opponent.posX) {
-					return;
+					this.posX -= 1;
 				}
 				this.posX += 1;
 			}
 
 			if (this.posX > this.target.posX) {
 				if (this.posX - 1 === opponent.posX) {
-					return;
+					this.posX += 1;
 				}
 				this.posX -= 1;
 			}
 
 			if (this.posY < this.target.posY) {
 				if (this.posY + 1 === opponent.posY) {
-					return;
+					this.posY -= 1;
 				}
 				this.posY += 1;
 			}
 
 			if (this.posY > this.target.posY) {
 				if (this.posY - 1 === opponent.posY) {
-					return;
+					this.posY += 1;
 				}
 				this.posY -= 1;
 			}
