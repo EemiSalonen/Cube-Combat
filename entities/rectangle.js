@@ -55,9 +55,9 @@ export class Rectangle {
 		this.corr.context.beginPath();
 		this.corr.context.fillStyle = "white";
 		this.corr.context.arc(
-			this.corr.x.get(this.posX) + 5,
-			this.corr.y.get(this.posY) + 5,
-			2,
+			this.corr.x.get(this.posX) + this.sizeX / 2,
+			this.corr.y.get(this.posY) + this.sizeY / 2,
+			this.sizeX / 2,
 			0,
 			2 * Math.PI
 		);

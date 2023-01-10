@@ -54,7 +54,8 @@ c.height = innerHeight;
 c.onclick = (e) => mouseLocation(e);
 
 // Draw the coordinates and create pixel-to-coord data. Also defines the 2d context of the canvas which is stored in the correlation object
-const corr = drawField(c, c.getContext("2d"), 10);
+const fieldSize = 10;
+const corr = drawField(c, c.getContext("2d"), fieldSize);
 
 const redData = { spawnpoint: { x: -90, y: -41 } };
 const blueData = { spawnpoint: { x: 90, y: 41 } };
@@ -91,7 +92,7 @@ field.forEach((entity) => entity.draw());
 
 const intervalId = setInterval(() => {
 	corr.context.clearRect(0, 0, c.width, c.height);
-	drawField(c, c.getContext("2d"), 10);
+	drawField(c, c.getContext("2d"), fieldSize);
 
 	field.forEach((entity) => {
 		const deletable = entity.checkSurroundings(field);
