@@ -3,24 +3,42 @@ import { line, rectangle, triangle } from "./lib/api.js";
 import { Rectangle, Food } from "./entities/rectangle.js";
 
 // UI
-const rPelem = document.querySelector("#red");
-rPelem.style.color = "red";
-const bPelem = document.querySelector("#blue");
-bPelem.style.color = "blue";
-const oPelem = document.querySelector("#orange");
-oPelem.style.color = "orange";
-const gPelem = document.querySelector("#green");
-gPelem.style.color = "green";
+const rPelemWorkers = document.querySelector("#red-worker");
+rPelemWorkers.style.color = "red";
+
+const bPelemWorkers = document.querySelector("#blue-worker");
+bPelemWorkers.style.color = "blue";
+
+const oPelemWorkers = document.querySelector("#orange-worker");
+oPelemWorkers.style.color = "orange";
+
+const gPelemWorkers = document.querySelector("#green-worker");
+gPelemWorkers.style.color = "green";
+
+const rPelemWarriors = document.querySelector("#red-warrior");
+rPelemWarriors.style.color = "red";
+
+const bPelemWarriors = document.querySelector("#blue-warrior");
+bPelemWarriors.style.color = "blue";
+
+const oPelemWarriors = document.querySelector("#orange-warrior");
+oPelemWarriors.style.color = "orange";
+
+const gPelemWarriors = document.querySelector("#green-warrior");
+gPelemWarriors.style.color = "green";
+
 const pauseButton = document.querySelector("#pause");
 pauseButton.onclick = () => pause(); // Temporary debugging device
 
 let paused = false;
 function getAmount(color) {
-	let total = 0;
+	let workers = 0;
+	let warriors = 0;
 	field.forEach((entity) => {
-		if (entity.color === color) total++;
+		if (entity.color === color && !entity.warrior) workers++;
+		if (entity.color === color && entity.warrior) warriors++;
 	});
-	return total;
+	return [workers, warriors];
 }
 
 function pause() {
@@ -184,10 +202,15 @@ const intervalId = setInterval(() => {
 	field.forEach((entity) => entity.draw());
 
 	// UI element refresh
-	rPelem.innerHTML = getAmount("red");
-	bPelem.innerHTML = getAmount("blue");
-	oPelem.innerHTML = getAmount("orange");
-	gPelem.innerHTML = getAmount("green");
+	rPelemWorkers.innerHTML = getAmount("red")[0];
+	bPelemWorkers.innerHTML = getAmount("blue")[0];
+	oPelemWorkers.innerHTML = getAmount("orange")[0];
+	gPelemWorkers.innerHTML = getAmount("green")[0];
+
+	rPelemWarriors.innerHTML = getAmount("red")[1];
+	bPelemWarriors.innerHTML = getAmount("blue")[1];
+	oPelemWarriors.innerHTML = getAmount("orange")[1];
+	gPelemWarriors.innerHTML = getAmount("green")[1];
 
 	if (paused) clearInterval(intervalId);
 }, 100);
