@@ -52,7 +52,6 @@ export class Rectangle {
 	}
 
 	drawWarrior() {
-		console.log(this.corr.x.get(2) - this.corr.x.get(1));
 		this.corr.context.beginPath();
 		this.corr.context.fillStyle = "white";
 		this.corr.context.arc(
