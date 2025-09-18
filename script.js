@@ -1,5 +1,4 @@
 import { mouseLocation, drawField } from "./lib/init.js";
-import { line, rectangle, triangle } from "./lib/api.js";
 import { Rectangle, Food } from "./entities/rectangle.js";
 
 // UI

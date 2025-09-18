@@ -1,34 +1,21 @@
-import { rectangle, triangle } from "../lib/api.js";
+import { rectangle } from "~/canvas-api/api";
 
 export class Rectangle {
 	constructor(
-		corr,
-		posX,
-		posY,
-		color,
-		attack,
-		defense,
-		id,
-		warrior = false,
-		sizeX = 1,
-		sizeY = 1,
-		fill = true
-	) {
-		this.corr = corr;
-		this.posX = posX;
-		this.posY = posY;
-		this.id = id;
-		this.color = color;
-		this.sizeX = sizeX;
-		this.sizeY = sizeY;
-		this.fill = fill;
-		this.attack = attack;
-		this.defense = defense;
-		this.combatValue = 0;
-		this.addInstanceAmount();
-		this.warrior = warrior;
-		this.target;
-	}
+		public corr: any,
+		public posX: number,
+		public posY: number,
+		public color: string,
+		public attack: number,
+		public defense: number,
+		public id: number | string,
+		public warrior = false,
+		public sizeX: any = 1,
+		public sizeY: any = 1,
+		public fill = true,
+		public combatValue = 0,
+		private target: Rectangle | null = null
+	) {}
 	static instanceAmount = 0;
 
 	addInstanceAmount() {
@@ -66,9 +53,9 @@ export class Rectangle {
 		this.corr.context.fill();
 	}
 
-	occupied(field) {
+	occupied(field: any) {
 		let found;
-		field.forEach((entity) => {
+		field.forEach((entity: Rectangle) => {
 			if (entity.posX === this.posX + 1 && entity.posY === this.posY) {
 				found = entity;
 			}
@@ -108,16 +95,16 @@ export class Rectangle {
 			return false;
 		}
 	}
-
-	warriorSearch(field) {
+	// Change to use a*
+	warriorSearch(field: any) {
 		let nearestDistX = Number.MAX_SAFE_INTEGER;
 		let nearestDistY = Number.MAX_SAFE_INTEGER;
 
-		let nearestX = 0;
-		let nearestY = 0;
-		let targetedEnemy;
+		let nearestX: number | Rectangle = 0;
+		let nearestY: number | Rectangle = 0;
+		let targetedEnemy: Rectangle | null | number = null;
 
-		field.forEach((entity) => {
+		field.forEach((entity: Rectangle) => {
 			if (
 				entity instanceof Food === false &&
 				entity !== this &&
@@ -148,12 +135,13 @@ export class Rectangle {
 		return targetedEnemy;
 	}
 
-	move(field, opponent) {
+	// Change to use a*
+	move(field: any, opponent: Rectangle) {
 		if (this.warrior) {
 			if (!this.target) {
 				this.target = this.warriorSearch(field);
 			} else {
-				this.target = field.get(this.target.id);
+				this.target = field.get(this.target!.id);
 			}
 		} else {
 			this.target = field.get(this.color);
@@ -221,7 +209,7 @@ export class Rectangle {
 		}
 	}
 
-	fight(enemy) {
+	fight(enemy: Rectangle) {
 		// 50% chance for either to attack upon seeing each other
 		const starter = Math.round(Math.random());
 		if (starter) {
@@ -247,8 +235,8 @@ export class Rectangle {
 		}
 	}
 
-	checkSurroundings(field) {
-		const opponent = this.occupied(field);
+	checkSurroundings(field: any) {
+		const opponent: any = this.occupied(field);
 
 		if (this instanceof Food) return;
 
@@ -266,13 +254,22 @@ export class Rectangle {
 		}
 	}
 
-	eat(foodPiece) {
+	eat(foodPiece: Rectangle) {
 		return { food: foodPiece.id, color: this.color };
 	}
 }
 
 export class Food extends Rectangle {
-	constructor(corr, posX, posY, color, id, sizeX, sizeY, fill) {
+	constructor(
+		corr: any,
+		posX: number,
+		posY: number,
+		color: string,
+		id: string,
+		sizeX?: any,
+		sizeY?: any,
+		fill?: any
+	) {
 		super(corr, posX, posY, color, 0, 0, id, sizeX, sizeY, fill);
 	}
 }
