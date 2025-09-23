@@ -11,7 +11,7 @@ export const FactionBars = ({ props }: any) => {
 			style={{
 				display: "flex",
 				flexDirection: "column",
-				width: "110px",
+				width: "110px", // Should be set dynamically based on the maximum length of a bar
 				gap: "2px",
 			}}
 		>

@@ -4,82 +4,52 @@ export function mouseLocation(event: any) {
 	console.log(`x: ${event.clientX}, y: ${event.clientY}`);
 }
 
-export function drawField(c: any, ctx: any, acc: any) {
-	// x-axis zero index
-	const xzi = c.width / 2;
-	// y-axis zero index
-	const yzi = c.height / 2;
-	ctx.strokeStyle = "rgb(230,230,230)";
-
-	// Create x-axis
-	ctx.beginPath();
-	ctx.moveTo(0, yzi);
-	ctx.lineTo(c.width, yzi);
-	ctx.stroke();
-
-	// Create y-axis
-	ctx.beginPath();
-	ctx.moveTo(xzi, 0);
-	ctx.lineTo(xzi, c.height);
-	ctx.stroke();
-
-	return drawMarks(c, ctx, xzi, yzi, acc);
+interface Point {
+	x: number;
+	y: number;
 }
 
-export function drawMarks(c: any, ctx: any, xzi: any, yzi: any, acc: any) {
-	const markLength = innerHeight;
-	const xCorr = new Map();
-	const yCorr = new Map();
+export function drawLine(start: Point, target: Point, ctx: any, color: string) {
+	ctx.beginPath();
+	ctx.strokeStyle = color;
+	ctx.moveTo(start.x, start.y);
+	ctx.lineTo(target.x, target.y);
+	ctx.stroke();
+}
 
-	let currentLoc = 1;
+export function createTiles(c: any, tileSize: number) {
+	const tiles = new Map();
+	let xKey = 0;
 
-	for (let i = xzi + acc; i < c.width; i += acc) {
-		ctx.moveTo(i, yzi + markLength);
-		ctx.lineTo(i, yzi - markLength);
-		ctx.stroke();
+	for (let x = 0; x <= c.width; x += tileSize) {
+		let yKey = 0;
 
-		xCorr.set(currentLoc, i);
-		currentLoc++;
+		for (let y = 0; y <= c.height; y += tileSize) {
+			const tile = { x, y, passable: true };
+			tiles.set(JSON.stringify({ x: xKey, y: yKey }), tile);
+			yKey++;
+		}
+		xKey++;
 	}
-
-	currentLoc = 1;
-
-	for (let i = xzi - acc; i > 0; i -= acc) {
-		ctx.moveTo(i, yzi + markLength);
-		ctx.lineTo(i, yzi - markLength);
-		ctx.stroke();
-
-		xCorr.set(-currentLoc, i);
-		currentLoc++;
-	}
-
-	currentLoc = 1;
-
-	for (let i = yzi + acc; i < c.height; i += acc) {
-		ctx.moveTo(xzi + markLength, i);
-		ctx.lineTo(xzi - markLength, i);
-		ctx.stroke();
-
-		yCorr.set(-currentLoc, i);
-		currentLoc++;
-	}
-
-	currentLoc = 1;
-
-	for (let i = yzi - acc; i > 0; i -= acc) {
-		ctx.moveTo(xzi + markLength, i);
-		ctx.lineTo(xzi - markLength, i);
-		ctx.stroke();
-
-		yCorr.set(currentLoc, i);
-		currentLoc++;
-	}
-	xCorr.set(0, xzi);
-	yCorr.set(0, yzi);
-
 	return {
-		x: xCorr,
-		y: yCorr,
-		context: ctx,
+		tiles,
+		getTile(coordinates: Point) {
+			return this.tiles.get(JSON.stringify(coordinates));
+		},
 	};
+}
+
+export function drawField(c: any, ctx: any, tileSize: number) {
+	const lineColor = "rgb(230,230,230)";
+
+	for (let y = 0; y <= c.height; y += tileSize) {
+		const currentStart = { x: 0, y };
+		const currentTarget = { x: c.width, y };
+		drawLine(currentStart, currentTarget, ctx, lineColor);
+	}
+	for (let x = 0; x <= c.width; x += tileSize) {
+		const currentStart = { x, y: 0 };
+		const currentTarget = { x, y: c.height };
+		drawLine(currentStart, currentTarget, ctx, lineColor);
+	}
 }

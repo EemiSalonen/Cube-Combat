@@ -15,7 +15,3 @@ div {
 	flex-direction: column;
 	margin: 10px 50px;
 }
-
-canvas {
-	border: 5px solid black;
-}

@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
-import { drawField } from "./init/init";
+import { createTiles, drawField } from "./init/init";
 import { Food, Rectangle } from "~/entities/rectangle";
 import { FRAMES_PER_SECOND } from "~/contants/constants";
 import { Header } from "../header/Header";
 import { calculateEntities } from "./util/calculateEntities";
+import { chooseFromRangeRandomly } from "./util/range";
 
 export const Canvas = ({ props }: any) => {
 	const field = new Map();
@@ -16,24 +17,26 @@ export const Canvas = ({ props }: any) => {
 		c!.width = innerWidth;
 		c!.height = innerHeight;
 
-		const fieldSize = 10;
-		const corr = drawField(c, ctx, fieldSize);
+		const tileSize = 10;
+		const tiles = createTiles(c, tileSize);
 
-		const redData = { spawnpoint: { x: -90, y: -41 } };
-		const blueData = { spawnpoint: { x: 90, y: 41 } };
-		const yellowData = { spawnpoint: { x: -90, y: 40 } };
-		const greenData = { spawnpoint: { x: 90, y: -40 } };
+		const redData = { spawnpoint: { x: 0, y: 0 } };
+		const blueData = { spawnpoint: { x: 0, y: 90 } };
+		const yellowData = { spawnpoint: { x: 190, y: 0 } };
+		const greenData = { spawnpoint: { x: 190, y: 90 } };
 
 		const square = (id: number, color: string, spawn: any, warrior = false) =>
 			new Rectangle(
-				corr,
+				ctx,
+				tiles,
 				spawn.spawnpoint.x,
 				spawn.spawnpoint.y,
 				color,
 				2,
 				2,
 				id,
-				warrior
+				warrior,
+				tileSize
 			);
 
 		let id = 1;
@@ -49,7 +52,8 @@ export const Canvas = ({ props }: any) => {
 
 		const render = () => {
 			if (true) {
-				corr.context.clearRect(0, 0, c!.width, c!.height);
+				ctx!.clearRect(0, 0, c!.width, c!.height);
+				drawField(c, ctx, tileSize);
 
 				field.forEach((entity: any) => {
 					const deletable = entity.checkSurroundings(field);
@@ -58,11 +62,13 @@ export const Canvas = ({ props }: any) => {
 						field.set(
 							"red",
 							new Food(
-								corr,
-								Math.floor((Math.random() - 0.5) * 40),
-								Math.floor((Math.random() - 0.5) * 40),
+								ctx,
+								tiles,
+								chooseFromRangeRandomly(0, 190),
+								chooseFromRangeRandomly(0, 90),
 								"brown",
-								"red"
+								"red",
+								tileSize
 							)
 						);
 					}
@@ -71,11 +77,13 @@ export const Canvas = ({ props }: any) => {
 						field.set(
 							"blue",
 							new Food(
-								corr,
-								Math.floor((Math.random() - 0.5) * 40),
-								Math.floor((Math.random() - 0.5) * 40),
+								ctx,
+								tiles,
+								chooseFromRangeRandomly(0, 190),
+								chooseFromRangeRandomly(0, 90),
 								"brown",
-								"blue"
+								"blue",
+								tileSize
 							)
 						);
 					}
@@ -84,11 +92,13 @@ export const Canvas = ({ props }: any) => {
 						field.set(
 							"orange",
 							new Food(
-								corr,
-								Math.floor((Math.random() - 0.5) * 40),
-								Math.floor((Math.random() - 0.5) * 40),
+								ctx,
+								tiles,
+								chooseFromRangeRandomly(0, 190),
+								chooseFromRangeRandomly(0, 90),
 								"brown",
-								"orange"
+								"orange",
+								tileSize
 							)
 						);
 					}
@@ -97,11 +107,13 @@ export const Canvas = ({ props }: any) => {
 						field.set(
 							"green",
 							new Food(
-								corr,
-								Math.floor((Math.random() - 0.5) * 40),
-								Math.floor((Math.random() - 0.5) * 40),
+								ctx,
+								tiles,
+								chooseFromRangeRandomly(0, 190),
+								chooseFromRangeRandomly(0, 90),
 								"brown",
-								"green"
+								"green",
+								tileSize
 							)
 						);
 					}

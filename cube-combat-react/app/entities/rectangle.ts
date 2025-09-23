@@ -1,18 +1,18 @@
-import { rectangle } from "~/canvas-api/api";
+import { warrior, worker } from "~/canvas-api/api";
 
 export class Rectangle {
 	constructor(
-		public corr: any,
-		public posX: number,
-		public posY: number,
+		public context: any,
+		public tiles: any,
+		public x: number,
+		public y: number,
 		public color: string,
 		public attack: number,
 		public defense: number,
 		public id: number | string,
 		public warrior = false,
-		public sizeX: any = 1,
-		public sizeY: any = 1,
-		public fill = true,
+		public size: number,
+		public fill: boolean = true,
 		public combatValue = 0,
 		private target: Rectangle | null = null
 	) {}
@@ -23,68 +23,60 @@ export class Rectangle {
 	}
 
 	draw() {
-		rectangle(
-			this.corr,
-			this.posX,
-			this.posY,
-			this.sizeX,
-			this.sizeY,
-			this.color,
-			this.fill
-		);
-
 		if (this.warrior) {
 			this.drawWarrior();
+		} else {
+			worker(
+				this.context,
+				this.tiles.getTile({ x: this.x, y: this.y }),
+				this.size,
+				this.color,
+				this.fill
+			);
 		}
 	}
 
 	drawWarrior() {
-		this.corr.context.beginPath();
-		this.corr.context.fillStyle = "white";
-		this.corr.context.arc(
-			this.corr.x.get(this.posX) +
-				(this.corr.x.get(2) - this.corr.x.get(1)) / 2,
-			this.corr.y.get(this.posY) +
-				(this.corr.x.get(2) - this.corr.x.get(1)) / 2,
-			(this.corr.x.get(2) - this.corr.x.get(1)) * 0.33,
-			0,
-			2 * Math.PI
+		warrior(
+			this.context,
+			this.tiles.getTile({ x: this.x, y: this.y }),
+			this.size,
+			this.color
 		);
-		this.corr.context.fill();
 	}
 
 	occupied(field: any) {
 		let found;
 		field.forEach((entity: Rectangle) => {
-			if (entity.posX === this.posX + 1 && entity.posY === this.posY) {
+			if (entity.x === this.x + 1 && entity.y === this.y) {
 				found = entity;
 			}
 
-			if (entity.posX === this.posX + 1 && entity.posY === this.posY + 1) {
+			if (entity.x === this.x + 1 && entity.y === this.y + 1) {
 				found = entity;
 			}
 
-			if (entity.posX === this.posX + 1 && entity.posY === this.posY - 1) {
+			if (entity.x === this.x + 1 && entity.y === this.y - 1) {
 				found = entity;
 			}
 
-			if (entity.posX === this.posX - 1 && entity.posY === this.posY) {
+			if (entity.x === this.x - 1 && entity.y === this.y) {
 				found = entity;
 			}
 
-			if (entity.posX === this.posX - 1 && entity.posY === this.posY + 1) {
+			if (entity.x === this.x - 1 && entity.y === this.y + 1) {
 				found = entity;
 			}
 
-			if (entity.posX === this.posX - 1 && entity.posY === this.posY - 1) {
+			if (entity.x === this.x - 1 && entity.y === this.y - 1) {
 				found = entity;
 			}
 
-			if (entity.posY === this.posY + 1 && entity.posX === this.posX) {
+			if (entity.y === this.y + 1 && entity.x === this.x) {
 				found = entity;
 			}
 
-			if (entity.posY === this.posY - 1 && entity.posX === this.posX) {
+			if (entity.y === this.y - 1 && entity.x === this.x) {
 				found = entity;
 			}
 		});
@@ -110,10 +102,10 @@ export class Rectangle {
 				entity !== this &&
 				entity.color !== this.color
 			) {
-				const distCalcEntityX = entity.posX <= 0 ? -entity.posX : entity.posX;
-				const distCalcThisX = this.posX <= 0 ? -this.posX : this.posX;
-				const distCalcEntityY = entity.posY <= 0 ? -entity.posY : entity.posY;
-				const distCalcThisY = this.posY <= 0 ? -this.posY : this.posY;
+				const distCalcEntityX = entity.x <= 0 ? -entity.x : entity.x;
+				const distCalcThisX = this.x <= 0 ? -this.x : this.x;
+				const distCalcEntityY = entity.y <= 0 ? -entity.y : entity.y;
+				const distCalcThisY = this.y <= 0 ? -this.y : this.y;
 
 				if (distCalcEntityX - distCalcThisX < nearestDistX) {
 					nearestDistX = distCalcEntityX - distCalcThisX;
@@ -148,63 +140,32 @@ export class Rectangle {
 		}
 
 		if (this.target) {
-			if (this.posX < this.target.posX) {
-				if (this.posX + 1 === opponent.posX) {
-					this.posX -= 1;
+			if (this.x < this.target.x) {
+				if (this.x + 1 === opponent.x) {
+					this.x -= 1;
 				}
-				this.posX += 1;
+				this.x += 1;
 			}
 
-			if (this.posX > this.target.posX) {
-				if (this.posX - 1 === opponent.posX) {
-					this.posX += 1;
+			if (this.x > this.target.x) {
+				if (this.x - 1 === opponent.x) {
+					this.x += 1;
 				}
-				this.posX -= 1;
+				this.x -= 1;
 			}
 
-			if (this.posY < this.target.posY) {
-				if (this.posY + 1 === opponent.posY) {
-					this.posY -= 1;
+			if (this.y < this.target.y) {
+				if (this.y + 1 === opponent.y) {
+					this.y -= 1;
 				}
-				this.posY += 1;
+				this.y += 1;
 			}
 
-			if (this.posY > this.target.posY) {
-				if (this.posY - 1 === opponent.posY) {
-					this.posY += 1;
+			if (this.y > this.target.y) {
+				if (this.y - 1 === opponent.y) {
+					this.y += 1;
 				}
-				this.posY -= 1;
-			}
-		} else {
-			const dir = Math.floor(Math.random() * 4 + 1);
-			switch (dir) {
-				case 1:
-					if (this.corr.y.get(this.posY + 1)) {
-						this.posY += 1;
-					} else {
-						this.posY -= 1;
-					}
-					break;
-				case 2:
-					if (this.corr.x.get(this.posX + 1)) {
-						this.posX += 1;
-					} else {
-						this.posX -= 1;
-					}
-					break;
-				case 3:
-					if (this.corr.y.get(this.posY - 1)) {
-						this.posY -= 1;
-					} else {
-						this.posY += 1;
-					}
-					break;
-				case 4:
-					if (this.corr.x.get(this.posX - 1)) {
-						this.posX -= 1;
-					} else {
-						this.posX += 1;
-					}
+				this.y -= 1;
 			}
 		}
 	}
@@ -261,15 +222,15 @@ export class Rectangle {
 
 export class Food extends Rectangle {
 	constructor(
-		corr: any,
-		posX: number,
-		posY: number,
+		context: any,
+		tiles: any,
+		x: number,
+		y: number,
 		color: string,
 		id: string,
-		sizeX?: any,
-		sizeY?: any,
+		size: number,
 		fill?: any
 	) {
-		super(corr, posX, posY, color, 0, 0, id, sizeX, sizeY, fill);
+		super(context, tiles, x, y, color, 0, 0, id, false, size);
 	}
 }
