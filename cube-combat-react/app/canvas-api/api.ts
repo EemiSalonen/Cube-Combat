@@ -7,7 +7,6 @@ export function worker(
 	color: string,
 	fill = true
 ) {
-	console.log("TILE", tile);
 	context.strokeStyle = color;
 	context.fillStyle = color;
 	context.beginPath();

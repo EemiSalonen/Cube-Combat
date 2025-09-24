@@ -1,9 +1,9 @@
-function getLowestFValueAndLowestHValue(map, goal) {
-	const valueObj = {};
+function getLowestFValueAndLowestHValue(map: any, goal: any) {
+	const valueObj: any = {};
 	let lowestF = Number.MAX_SAFE_INTEGER;
 	let lowestH = Number.MAX_SAFE_INTEGER;
 	let node = null;
-	map.forEach((value, key) => {
+	map.forEach((value: any, key: any) => {
 		if (!valueObj[value]) {
 			valueObj[value] = [key];
 		} else {
@@ -23,7 +23,7 @@ function getLowestFValueAndLowestHValue(map, goal) {
 	return node;
 }
 
-export function heuristicCostEstimation(node, goal, nodeLength) {
+export function heuristicCostEstimation(node: any, goal: any, nodeLength: any) {
 	const dx = Math.abs(node.x - goal.x);
 	const dy = Math.abs(node.y - goal.y);
 
@@ -32,7 +32,7 @@ export function heuristicCostEstimation(node, goal, nodeLength) {
 	);
 }
 
-function reconstructPath(cameFrom, current, start) {
+function reconstructPath(cameFrom: any, current: any, start: any) {
 	const totalPath = [current];
 	while (current !== start) {
 		current = cameFrom.get(current);
@@ -40,8 +40,7 @@ function reconstructPath(cameFrom, current, start) {
 	}
 	return totalPath;
 }
-// {pixelValue: number, passable: boolean}
-export function aStar(start, goal) {
+export function aStar(start: any, goal: any) {
 	const open = new Map();
 	const cameFrom = new Map();
 
@@ -54,8 +53,7 @@ export function aStar(start, goal) {
 	fScore.set(start, heuristicCostEstimation(start, goal, 1));
 	while (open.size > 0) {
 		let current = getLowestFValueAndLowestHValue(fScore, goal);
-		if (current.symbol === "G")
-			return reconstructPath(cameFrom, current, start);
+		if (current === goal) return reconstructPath(cameFrom, current, start);
 		open.delete(current);
 		fScore.delete(current);
 		for (const neighbor of current.neighbors) {

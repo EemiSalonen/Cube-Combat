@@ -1,4 +1,6 @@
 import { warrior, worker } from "~/canvas-api/api";
+import { aStar, heuristicCostEstimation } from "./pathfinding/astar";
+import { chooseFromRangeRandomly } from "~/components/canvas/util/range";
 
 export class Rectangle {
 	constructor(
@@ -127,50 +129,57 @@ export class Rectangle {
 		return targetedEnemy;
 	}
 
-	// Change to use a*
-	move(field: any, opponent: Rectangle) {
-		if (this.warrior) {
-			if (!this.target) {
-				this.target = this.warriorSearch(field);
-			} else {
-				this.target = field.get(this.target!.id);
+	searchForFood(field: any) {
+		let lowestDistance = Infinity;
+		let target: any = null;
+		field.forEach((entity: any) => {
+			if (entity !== this) {
+				const currentDistance = heuristicCostEstimation(
+					{ x: this.x, y: this.y },
+					{ x: entity.x, y: entity.y },
+					1
+				);
+
+				if (currentDistance < lowestDistance && entity.color === "brown") {
+					lowestDistance = currentDistance;
+					target = entity;
+				}
 			}
+		});
+
+		return target;
+	}
+
+	move(tiles: any, field: any) {
+		if (this instanceof Food) {
 		} else {
-			this.target = field.get(this.color);
-		}
+			this.target = this.searchForFood(field);
 
-		if (this.target) {
-			if (this.x < this.target.x) {
-				if (this.x + 1 === opponent.x) {
-					this.x -= 1;
-				}
-				this.x += 1;
+			const currentDistanceToTarget = heuristicCostEstimation(
+				{ x: this.x, y: this.y },
+				{ x: this.target?.x, y: this.target?.y },
+				1
+			);
+
+			if (currentDistanceToTarget < 2) {
+				const eaten = this.eat(this.target);
+				field.delete(eaten.food);
+				this.target = this.searchForFood(field);
 			}
 
-			if (this.x > this.target.x) {
-				if (this.x - 1 === opponent.x) {
-					this.x += 1;
-				}
-				this.x -= 1;
-			}
+			const result: any = aStar(
+				tiles.getTile({ x: this.x, y: this.y }),
+				tiles.getTile({ x: this.target?.x, y: this.target?.y })
+			);
 
-			if (this.y < this.target.y) {
-				if (this.y + 1 === opponent.y) {
-					this.y -= 1;
-				}
-				this.y += 1;
-			}
-
-			if (this.y > this.target.y) {
-				if (this.y - 1 === opponent.y) {
-					this.y += 1;
-				}
-				this.y -= 1;
+			if (result[1]) {
+				this.x = result[1].location.x;
+				this.y = result[1].location.y;
 			}
 		}
 	}
 
-	fight(enemy: Rectangle) {
+	fight(enemy: any) {
 		// 50% chance for either to attack upon seeing each other
 		const starter = Math.round(Math.random());
 		if (starter) {
@@ -209,13 +218,11 @@ export class Rectangle {
 				if (dest) {
 					return dest;
 				}
-			} else {
-				this.move(field, opponent);
 			}
 		}
 	}
 
-	eat(foodPiece: Rectangle) {
+	eat(foodPiece: any) {
 		return { food: foodPiece.id, color: this.color };
 	}
 }
